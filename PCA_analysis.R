@@ -11,17 +11,21 @@ highCor<-function(table,threshold){
 
 PCA<-function(path,file){
     setwd(dir=path)
-    table<-read.table(file=file,sep=";",header=T,row.name=1) # import data
-    summary(table) # basic analysis of variables (mean, median, quartile)
+    table<-read.table(file=file, sep=";", header=T, row.name=1) # import data
+    cat("\nSummary:\n")
+    print(summary(table)) # basic analysis of variables (mean, median, quartile)
     table_cor<-cor(table) # correlation table
-    highCor(table_cor,0.6) # display high values
+    cat("\nCorrelation threshold: ")
+    threshold<-as.numeric(readLines(file("stdin"), n = 1))
+    cat("\nCorrelation table:\n")
+    highCor(table_cor,threshold) # display high values
 
     table_pca<-princomp(table,cor=T,scores=T) # principal components analysis
     table_pca # display standard deviation, number of variables and observations
     table_pca$loadings # eigen vectors
     summary(table_pca) # importance of components
 
-    var<-table_pca$sdev^2 # calculation of variance
+    var<-table_pca$sdev^2 # calculation of variance (eigen values)
     png(filename="Elbow curve.png") # create a png for the following plot
     plot(1:length(table[1,]),var,type="b") # elbow curve
     dev.off() # close png
@@ -34,8 +38,9 @@ PCA<-function(path,file){
     dev.off()
 }
 
-print("Path: ")
-path<-readLines(n = 1)
-print("File: ")
-file<-readLines(n = 1)
+cat("Path: ")
+path<-readLines(file("stdin"), n = 1)
+cat("File: ")
+file<-readLines(file("stdin"), n = 1)
 PCA(path,file)
+readLines(file("stdin"), n = 1)
