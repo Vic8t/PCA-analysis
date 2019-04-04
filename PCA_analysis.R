@@ -34,6 +34,8 @@ PCA<-function(path,file){
     dev.off()
 }
 
-path<-readline(prompt="Path: ")
-file<-readline(prompt="File: ")
+print("Path: ")
+path<-readLines(n = 1)
+print("File: ")
+file<-readLines(n = 1)
 PCA(path,file)
