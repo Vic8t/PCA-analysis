@@ -24,6 +24,10 @@ PCA<-function(path,file){
     table_pca # display standard deviation, number of variables and observations
     table_pca$loadings # eigen vectors
     summary(table_pca) # importance of components
+    cat("\nComp 1:\n")
+    print(as.matrix(sort(table_pca$loadings[,1])))
+    cat("\nComp 2:\n")
+    print(as.matrix(sort(table_pca$loadings[,2])))
 
     var<-table_pca$sdev^2 # calculation of variance (eigen values)
     png(filename="Elbow curve.png") # create a png for the following plot
@@ -36,6 +40,22 @@ PCA<-function(path,file){
     text(comp1, comp2,labels=colnames(table))
     abline(h=0,v=0)
     dev.off()
+
+    cat("\nGraph title: ")
+    title<-readLines(file("stdin"), n = 1)
+    cat("X axis (low): ")
+    xl<-readLines(file("stdin"), n = 1)
+    cat("X axis (high): ")
+    xh<-readLines(file("stdin"), n = 1)
+    cat("Y axis (low): ")
+    yl<-readLines(file("stdin"), n = 1)
+    cat("X axis (high): ")
+    yh<-readLines(file("stdin"), n = 1)
+    png(filename="Graph.png", width = 1500, height = 1000, res = 100)
+    plot(table_pca$scores[,1],table_pca$scores[,2],col="white",main=title,xlab=paste(xl,"<->",xh),ylab=paste(yl,"<->",yh),col.main="red",col.lab="blue") # 2D graph for analysis
+    text(table_pca$scores[,1],table_pca$scores[,2],labels=rownames(table))
+    abline(h=0,v=0)
+    dev.off()
 }
 
 cat("Path: ")
@@ -43,4 +63,3 @@ path<-readLines(file("stdin"), n = 1)
 cat("File: ")
 file<-readLines(file("stdin"), n = 1)
 PCA(path,file)
-readLines(file("stdin"), n = 1)
