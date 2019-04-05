@@ -25,9 +25,15 @@ PCA<-function(path,file){
     table_pca$loadings # eigen vectors
     summary(table_pca) # importance of components
     cat("\nComp 1:\n")
-    print(as.matrix(sort(table_pca$loadings[,1])))
+    M1<-as.matrix(sort(table_pca$loadings[,1], decreasing = TRUE)) # find important variables for comp 1
+    print(M1)
+    xl<-paste(rownames(M1)[1], "-", rownames(M1)[2])
+    xh<-paste(rownames(M1)[length(M1)], "-", rownames(M1)[length(M1)-1])
     cat("\nComp 2:\n")
-    print(as.matrix(sort(table_pca$loadings[,2])))
+    M2<-as.matrix(sort(table_pca$loadings[,2], decreasing = TRUE))
+    print(M2)
+    yl<-paste(rownames(M2)[1], "-", rownames(M2)[2])
+    yh<-paste(rownames(M2)[length(M2)], "-", rownames(M2)[length(M2)-1])
 
     var<-table_pca$sdev^2 # calculation of variance (eigen values)
     png(filename="Elbow curve.png") # create a png for the following plot
@@ -43,14 +49,6 @@ PCA<-function(path,file){
 
     cat("\nGraph title: ")
     title<-readLines(file("stdin"), n = 1)
-    cat("X axis (low): ")
-    xl<-readLines(file("stdin"), n = 1)
-    cat("X axis (high): ")
-    xh<-readLines(file("stdin"), n = 1)
-    cat("Y axis (low): ")
-    yl<-readLines(file("stdin"), n = 1)
-    cat("X axis (high): ")
-    yh<-readLines(file("stdin"), n = 1)
     png(filename="Graph.png", width = 1500, height = 1000, res = 100)
     plot(table_pca$scores[,1],table_pca$scores[,2],col="white",main=title,xlab=paste(xl,"<->",xh),ylab=paste(yl,"<->",yh),col.main="red",col.lab="blue") # 2D graph for analysis
     text(table_pca$scores[,1],table_pca$scores[,2],labels=rownames(table))
@@ -58,8 +56,10 @@ PCA<-function(path,file){
     dev.off()
 }
 
-cat("Path: ")
-path<-readLines(file("stdin"), n = 1)
-cat("File: ")
+cat("\nAvailable folders: ", dir(paste(getwd(), "/data/", sep = ""), full.names = FALSE), "\n", sep = "   ")
+cat("Folder: ")
+path<-paste(getwd(), "/data/", readLines(file("stdin"), n = 1), sep = "")
+cat("\nAvailable files: ", list.files(path), "\n", sep = "   ")
+cat("CSV file: ")
 file<-readLines(file("stdin"), n = 1)
 PCA(path,file)
