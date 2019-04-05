@@ -27,13 +27,13 @@ PCA<-function(path,file){
     cat("\nComp 1:\n")
     M1<-as.matrix(sort(table_pca$loadings[,1], decreasing = TRUE)) # find important variables for comp 1
     print(M1)
-    xl<-paste(rownames(M1)[1], "-", rownames(M1)[2])
-    xh<-paste(rownames(M1)[length(M1)], "-", rownames(M1)[length(M1)-1])
+    xl<-paste(rownames(M1)[length(M1)], "-", rownames(M1)[length(M1)-1])
+    xh<-paste(rownames(M1)[1], "-", rownames(M1)[2])
     cat("\nComp 2:\n")
     M2<-as.matrix(sort(table_pca$loadings[,2], decreasing = TRUE))
     print(M2)
-    yl<-paste(rownames(M2)[1], "-", rownames(M2)[2])
-    yh<-paste(rownames(M2)[length(M2)], "-", rownames(M2)[length(M2)-1])
+    yl<-paste(rownames(M2)[length(M2)], "-", rownames(M2)[length(M2)-1])
+    yh<-paste(rownames(M2)[1], "-", rownames(M2)[2])
 
     var<-table_pca$sdev^2 # calculation of variance (eigen values)
     png(filename="Elbow curve.png") # create a png for the following plot
