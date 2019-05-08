@@ -21,19 +21,27 @@ PCA<-function(path,file){
     highCor(table_cor,threshold) # display high values
 
     table_pca<-princomp(table,cor=T,scores=T) # principal components analysis
-    table_pca # display standard deviation, number of variables and observations
-    table_pca$loadings # eigen vectors
-    summary(table_pca) # importance of components
+    # importance of components
+    cat("\nInformation comp 1 and 2:", (table_pca$sdev[1]^2+table_pca$sdev[2]^2)/length(table_pca$sdev)*100, "%\n")
+    cat("Information comp 1, 2 and 3:", (table_pca$sdev[1]^2+table_pca$sdev[2]^2+table_pca$sdev[3]^2)/length(table_pca$sdev)*100, "%\n")
+
     cat("\nComp 1:\n")
     M1<-as.matrix(sort(table_pca$loadings[,1], decreasing = TRUE)) # find important variables for comp 1
     print(M1)
     xl<-paste(rownames(M1)[length(M1)], "-", rownames(M1)[length(M1)-1])
     xh<-paste(rownames(M1)[1], "-", rownames(M1)[2])
+
     cat("\nComp 2:\n")
     M2<-as.matrix(sort(table_pca$loadings[,2], decreasing = TRUE))
     print(M2)
     yl<-paste(rownames(M2)[length(M2)], "-", rownames(M2)[length(M2)-1])
     yh<-paste(rownames(M2)[1], "-", rownames(M2)[2])
+
+    cat("\nComp 3:\n")
+    M3<-as.matrix(sort(table_pca$loadings[,3], decreasing = TRUE))
+    print(M3)
+    zl<-paste(rownames(M3)[length(M3)], "-", rownames(M3)[length(M3)-1])
+    zh<-paste(rownames(M3)[1], "-", rownames(M3)[2])
 
     var<-table_pca$sdev^2 # calculation of variance (eigen values)
     png(filename="Elbow curve.png") # create a png for the following plot
@@ -54,6 +62,26 @@ PCA<-function(path,file){
     text(table_pca$scores[,1],table_pca$scores[,2],labels=rownames(table))
     abline(h=0,v=0)
     dev.off()
+
+    if((table_pca$sdev[1]^2+table_pca$sdev[2]^2)/length(table_pca$sdev)*100 < 70){
+        # not enough information so we take comp 3
+        png(filename="Graph bis.png", width = 1500, height = 1000, res = 100)
+        plot(table_pca$scores[,1],table_pca$scores[,3],col="white",main=title,xlab=paste(xl,"<->",xh),ylab=paste(zl,"<->",zh),col.main="red",col.lab="blue")
+        text(table_pca$scores[,1],table_pca$scores[,3],labels=rownames(table))
+        abline(h=0,v=0)
+        dev.off()
+
+        png(filename="Graph ter.png", width = 1500, height = 1000, res = 100)
+        plot(table_pca$scores[,2],table_pca$scores[,3],col="white",main=title,xlab=paste(yl,"<->",yh),ylab=paste(zl,"<->",zh),col.main="red",col.lab="blue")
+        text(table_pca$scores[,2],table_pca$scores[,3],labels=rownames(table))
+        abline(h=0,v=0)
+        dev.off()
+    }
+
+    # png(filename="Biplot.png", width = 1500, height = 1000, res = 100)
+    # biplot(table_pca)
+    # abline(h=0,v=0)
+    # dev.off()
 }
 
 cat("\nAvailable folders: ", dir(paste(getwd(), "/data/", sep = ""), full.names = FALSE), "\n", sep = "   ")
