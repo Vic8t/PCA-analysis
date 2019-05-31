@@ -12,6 +12,7 @@ highCor<-function(table,threshold){
 PCA<-function(path,file){
     setwd(dir=path)
     table<-read.table(file=file, sep=";", header=T, row.name=1) # import data
+    # View(table)
     cat("\nSummary:\n")
     print(summary(table)) # basic analysis of variables (mean, median, quartile)
     table_cor<-cor(table) # correlation table
@@ -50,7 +51,7 @@ PCA<-function(path,file){
     comp1<-table_pca$loadings[,1]*table_pca$sdev[1]
     comp2<-table_pca$loadings[,2]*table_pca$sdev[2]
     png(filename="Correlation circle.png")
-    plot(comp1, comp2,xlim=c(-1,+1),ylim=c(-1,+1)) # correlation circle
+    plot(comp1, comp2,xlim=c(-1,+1),ylim=c(-1,+1), type="n") # correlation circle
     text(comp1, comp2,labels=colnames(table))
     abline(h=0,v=0)
     dev.off()
@@ -63,7 +64,7 @@ PCA<-function(path,file){
     abline(h=0,v=0)
     dev.off()
 
-    if((table_pca$sdev[1]^2+table_pca$sdev[2]^2)/length(table_pca$sdev)*100 < 70){
+    if((table_pca$sdev[1]^2+table_pca$sdev[2]^2)/length(table_pca$sdev)*100 < 70){ # or eigen value < 1
         # not enough information so we take comp 3
         png(filename="Graph bis.png", width = 1500, height = 1000, res = 100)
         plot(table_pca$scores[,1],table_pca$scores[,3],col="white",main=title,xlab=paste(xl,"<->",xh),ylab=paste(zl,"<->",zh),col.main="red",col.lab="blue")
